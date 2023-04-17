@@ -42,7 +42,7 @@ expanding empty spaces is O(w * l), in worst case all cells will be pushed to qu
 ## Canvas vs Elements
 
 The advantages of using a canvas is you can easily repaint only the section that was changed, making optimization much easier, 
-where react needs extra time calculating diff.
+where react needs extra time calculating diff. For development, all you would need a mapping function from xy coords to pixels on canvas.
 
 Large amount of elements in dom can also cause browser to lag, canvas can avoid this issue
 
