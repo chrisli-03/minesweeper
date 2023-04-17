@@ -23,11 +23,15 @@ when i finish updating the game board.
 
 This is very bad practice but i think the performance boost is worth it
 
+There is another method i thought of which uses 2 states, one current and one next, everytime the board changes i would update the next state, 
+and after update finishes, i set the state to next state, and use current as next state, this way i can keep switching between the two states,
+the change in reference would allow react to rerender and i dont need to generate any new game boards. The reason i didn't use this approach is 
+there are extra work needed to keep the two states in sync, otherwise some data might be lost during the switch, the original method has a single source of truth 
+avoiding this issue.
+
 # Worst cases
 
 w = width, l = length, m = number of mines
-
-## Generating game board
 
 creating empty game board O(w * l), each cell will be visited once and place a default object
 
@@ -44,7 +48,7 @@ expanding empty spaces is O(w * l), in worst case all cells will be pushed to qu
 ## Canvas vs Elements
 
 The advantages of using a canvas is you can easily repaint only the section that was changed, making optimization much easier, 
-where react needs extra time calculating diff.
+where react needs extra time calculating diff. For development, all you would need a mapping function from xy coords to pixels on canvas.
 
 Large amount of elements in dom can also cause browser to lag, canvas can avoid this issue
 
