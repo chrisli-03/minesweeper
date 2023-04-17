@@ -27,8 +27,6 @@ This is very bad practice but i think the performance boost is worth it
 
 w = width, l = length, m = number of mines
 
-## Generating game board
-
 creating empty game board O(w * l), each cell will be visited once and place a default object
 
 simple fill average should be around O(m), but its random so worst case can be infinite but very unlikely to happen
