@@ -5,16 +5,18 @@ import {CellStatus} from "../helpers/enums";
 interface CellProps {
 	value: CellValue
 	status: CellStatus
-	update: (status: CellStatus) => void
+	update: (status: CellStatus, n?: number) => void
 }
+
+type Ref = HTMLDivElement
 
 const areEqual = (prevProps: CellProps, nextProps: CellProps) => {
 	return prevProps.status === nextProps.status
 }
 
-const Cell:React.FC<CellProps> = ({ value, status, update }) => {
-	console.log('cell rerender')
+const Cell = React.forwardRef<Ref, CellProps>(({ value, status, update }, ref) => {
 	let text: CellValue | '' | '!' = value;
+	// commented out to make game easier
 	// if (
 	// 	status === CellStatus.Closed
 	// 	|| (value === 0 && status !== CellStatus.Flagged)
@@ -39,9 +41,9 @@ const Cell:React.FC<CellProps> = ({ value, status, update }) => {
 			return
 		}
 		if (status === CellStatus.Flagged) {
-			update(CellStatus.Closed)
+			update(CellStatus.Closed, 1)
 		} else {
-			update(CellStatus.Flagged)
+			update(CellStatus.Flagged, -1)
 		}
 	}
 
@@ -52,10 +54,11 @@ const Cell:React.FC<CellProps> = ({ value, status, update }) => {
 			onContextMenu={handleContextMenu}
 			data-status={status}
 			data-mine={value === -1}
+			ref={ref}
 		>
 			{text}
 		</div>
 	)
-}
+})
 
 export default React.memo(Cell, areEqual)

@@ -1,46 +1,55 @@
 # Getting Started with Create React App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Steps to start
 
-## Available Scripts
+1. `npm install`
+2. `npm run build`
+3. `serve -s build`
+4. open `localhost:3000` on browser (port might differ if 3000 is already in use)
 
-In the project directory, you can run:
+# Optimizations
 
-### `npm start`
+## 1
+Used `React.memo` to check if the status of a cell has changed to prevent unchanged cell from rerendering
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## 2
+Placing game board outside of state, i used `React.useRef` instead of `React.useState` to store the game board.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+The reason is because state will trigger a render when reference changes but not when a value inside changes, 
+which means i need to create a new game board object to update the state, this can be very costly when game board is large
 
-### `npm test`
+The issue with using ref is it doesn't cause the page to rerender, which is why i added a time state to trigger a rerender
+when i finish updating the game board.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+This is very bad practice but i think the performance boost is worth it
 
-### `npm run build`
+# Worst cases
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+w = width, l = length, m = number of mines
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Generating game board
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+creating empty game board O(w * l), each cell will be visited once and place a default object
 
-### `npm run eject`
+simple fill average should be around O(m), but its random so worst case can be infinite but very unlikely to happen
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+complex fill is O(w * l), each cell needs to be visited once to create the hashmap
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+expanding empty spaces is O(w * l), in worst case all cells will be pushed to queue
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+## 
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+# Unimplemented thoughts
 
-## Learn More
+## Canvas vs Elements
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+The advantages of using a canvas is you can easily repaint only the section that was changed, making optimization much easier, 
+where react needs extra time calculating diff.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Large amount of elements in dom can also cause browser to lag, canvas can avoid this issue
+
+## Using ref to change class
+
+I thought about using ref to directly change class based on a cell's state so react doesn't need to run diff when cell status updates, which should improve the performance,
+but this is against data-driven design of react and might cause data and ui to be out of sync
+

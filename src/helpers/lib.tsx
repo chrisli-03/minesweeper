@@ -16,6 +16,7 @@ const increaseCellValue = (cell: CellType) => {
 	}
 }
 
+// keeps picking random coords and make it a mine
 const setupBoardSimple = (board: CellType[][], mines: number, safePos: CoordType) => {
 	const rows = board.length - 1
 	const cols = board[0].length - 1
@@ -27,6 +28,7 @@ const setupBoardSimple = (board: CellType[][], mines: number, safePos: CoordType
 			continue
 		} else {
 			board[x][y].value = -1
+			// when placing a mine, increase the number of its adjacent cells
 			board?.[x-1]?.[y-1] && increaseCellValue(board?.[x-1]?.[y-1])
 			board?.[x-1]?.[y] && increaseCellValue(board?.[x-1]?.[y])
 			board?.[x-1]?.[y+1] && increaseCellValue(board?.[x-1]?.[y+1])
@@ -56,6 +58,9 @@ const shuffle = <T,>(array: T[]) => {
 	return array
 }
 
+// put all possible coords in an array and shuffle
+// never picks a coord that is already a mine
+// used when number of mines is close to total number of cells to reduce duplication
 const setupBoardComplex = (board: CellType[][], mines: number, safePos: CoordType) => {
 	const rows = board.length
 	const cols = board[0].length
@@ -78,6 +83,7 @@ const setupBoardComplex = (board: CellType[][], mines: number, safePos: CoordTyp
 		const x = Number(coords[0])
 		const y = Number(coords[1])
 		board[x][y].value = -1
+		// when placing a mine, increase the number of its adjacent cells
 		board?.[x-1]?.[y-1] && increaseCellValue(board?.[x-1]?.[y-1])
 		board?.[x-1]?.[y] && increaseCellValue(board?.[x-1]?.[y])
 		board?.[x-1]?.[y+1] && increaseCellValue(board?.[x-1]?.[y+1])
@@ -92,7 +98,7 @@ const setupBoardComplex = (board: CellType[][], mines: number, safePos: CoordTyp
 export const setupBoard = (board: CellType[][], mines: number, safePos: CoordType = {x: -1, y: -1}) => {
 	const rows = board.length - 1
 	const cols = board[0].length - 1
-	// avoid duplication when number of mines is high
+	// avoid duplication when number of mines is close to total number of cells
 	if (mines > rows * cols / 2) {
 		setupBoardComplex(board, mines, safePos)
 	} else {
@@ -101,12 +107,15 @@ export const setupBoard = (board: CellType[][], mines: number, safePos: CoordTyp
 	return board
 }
 
+// keep pushing adjacent cells to a queue and open, repeat if cell is empty
+// if not empty or flagged dont push adjacent cells to queue
 export const expandEmptySpaces = (board: CellType[][], x: number, y: number) => {
 	let count = 0
 	const queue = [{x, y}]
+	// track of visited cells
 	const visitedCells = new Set()
 	const pushCellToQueue = (x: number, y: number) => {
-		if (
+		if ( // only push to queue if cell is not visited and not out of boundary
 			!visitedCells.has(`${x}_${y}`)
 			&& typeof board?.[x]?.[y] !== 'undefined'
 		) {
@@ -115,12 +124,12 @@ export const expandEmptySpaces = (board: CellType[][], x: number, y: number) => 
 		visitedCells.add(`${x}_${y}`)
 	}
 	while (queue.length > 0) {
-		const {x, y} = queue.pop() as { x: number; y: number; }
+		const {x, y} = queue.pop() as CoordType
 		if (board[x][y].status === CellStatus.Closed) {
 			board[x][y].status = CellStatus.Opened
 			count += 1
 		}
-		if (board[x][y].value === 0) {
+		if (board[x][y].value === 0) { // push adjacent to queue if cell is empty
 			pushCellToQueue(x-1, y-1)
 			pushCellToQueue(x-1, y)
 			pushCellToQueue(x-1, y+1)
@@ -131,5 +140,5 @@ export const expandEmptySpaces = (board: CellType[][], x: number, y: number) => 
 			pushCellToQueue(x+1, y+1)
 		}
 	}
-	return count
+	return count // need this to calculate if game is over or not
 }

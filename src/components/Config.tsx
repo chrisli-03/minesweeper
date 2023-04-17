@@ -5,9 +5,9 @@ interface ConfigProps {
 }
 
 const Config:React.FC<ConfigProps> = ({ setupConfig }) => {
-	const [height, setHeight] = React.useState(200)
-	const [width, setWidth] = React.useState(300)
-	const [mines, setMines] = React.useState(900)
+	const [height, setHeight] = React.useState(99)
+	const [width, setWidth] = React.useState(99)
+	const [mines, setMines] = React.useState(2000)
 	const handleUpdateHeight = (evt: React.FormEvent<HTMLInputElement>) => setHeight(Number(evt.currentTarget.value))
 	const handleUpdateWidth = (evt: React.FormEvent<HTMLInputElement>) => setWidth(Number(evt.currentTarget.value))
 	const handleUpdateMines = (evt: React.FormEvent<HTMLInputElement>) => setMines(Number(evt.currentTarget.value))
@@ -33,7 +33,7 @@ const Config:React.FC<ConfigProps> = ({ setupConfig }) => {
 			<section>
 				<label>
 					mines:&nbsp;
-					<input type="number" value={mines} onChange={handleUpdateMines} />
+					<input type="number" value={mines} onChange={handleUpdateMines} max={height * width - 1}/>
 				</label>
 			</section>
 			<button type="submit">Create Game</button>
