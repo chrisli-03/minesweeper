@@ -1,5 +1,7 @@
 # Getting Started with Create React App
 
+node version used: 16
+
 Steps to start
 
 1. `npm install`
