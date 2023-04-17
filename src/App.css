@@ -1,0 +1,29 @@
+.board {
+    user-select: none;
+}
+
+.row {
+    display: flex;
+}
+
+.cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    background-color: grey;
+    border: 1px solid black;
+    cursor: default;
+    flex-shrink: 0;
+}
+
+.cell[data-status="1"] {
+    background-color: #fff;
+}
+.cell[data-status="1"][data-mine="true"] {
+    background-color: red;
+}
+.cell[data-status="2"] {
+    color: red;
+}
