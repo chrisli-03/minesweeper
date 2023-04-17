@@ -16,7 +16,7 @@ const Board:React.FC<BoardProps> = ({ config }) => {
 	const isFirstClick = React.useRef(false) // track if click is first click
 	const board = React.useRef<CellType[][]>([]) // game board
 	const cellsRemaining = React.useRef(0) // number of cells to open to win
-	const cellRefs = React.useRef<Map<string, HTMLDivElement>>(null) // ref to cells, not used atm
+	const cellRefs = React.useRef<Map<string, HTMLDivElement> | null>(null) // ref to cells, not used atm
 	const counterInterval = React.useRef<NodeJS.Timer | null>(null) // interval for counter increment
 
 	React.useEffect(() => {
@@ -52,8 +52,6 @@ const Board:React.FC<BoardProps> = ({ config }) => {
 	const getMap = () => {
 		if (!cellRefs.current) {
 			// Initialize the Map on first usage.
-			// cant figure out the cause of this typescript error
-			// @ts-ignore
 			cellRefs.current = new Map<string, HTMLDivElement>();
 		}
 		return cellRefs.current;
