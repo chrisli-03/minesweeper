@@ -1,4 +1,4 @@
-# Getting Started with Create React App
+# Web based Minesweeper game build with Next.js
 
 node version used: 16
 
